@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flags of the World — Silas Quiz</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#1b2a6b;
+      --card:#0f1736cc;
+      --card2:#0c122dcc;
+      --text:#f6f7ff;
+      --muted:#c9d1ff;
+      --good:#2ee59d;
+      --bad:#ff5c7a;
+      --warn:#ffd166;
+      --btn:#2b3fff;
+      --btn2:#ff3d9a;
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 500px at 20% 5%, rgba(255,61,154,.25), transparent 55%),
+        radial-gradient(900px 420px at 85% 20%, rgba(46,229,157,.20), transparent 55%),
+        radial-gradient(800px 500px at 30% 90%, rgba(43,63,255,.25), transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    header{
+      padding:18px 14px 10px;
+      position:sticky;
+      top:0;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,16,32,.85), rgba(11,16,32,.15));
+      z-index:10;
+    }
+
+    .wrap{ max-width: 980px; margin:0 auto; padding: 0 14px 26px; overflow-x: hidden; }
+
+    .topRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    h1{
+      font-size: clamp(18px, 2.6vw, 26px);
+      margin:0;
+      letter-spacing: .2px;
+    }
+    .sub{
+      margin:4px 0 0;
+      font-size: 13px;
+      color:var(--muted);
+    }
+
+    .pillRow{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .pills{ display:flex; gap:8px; flex-wrap:wrap; }
+
+    .pill{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      box-shadow: 0 10px 20px rgba(0,0,0,.12);
+    }
+
+    .pill b{ color:#fff; }
+
+    .btnRow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+    button{
+      cursor:pointer;
+      border:none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color:white;
+      background: linear-gradient(135deg, rgba(43,63,255,1), rgba(255,61,154,1));
+      box-shadow: var(--shadow);
+      transition: transform .12s ease, filter .12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:active{ transform: scale(.98); }
+    button.secondary{
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.20);
+      box-shadow: 0 14px 28px rgba(0,0,0,.24);
+    }
+    button.ghost{
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,.30);
+      box-shadow:none;
+    }
+
+    main{ padding-top: 8px; }
+
+    .grid{
+      display:grid;
+      gap:16px;
+      grid-template-columns: 1fr;
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .modeTabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 10px;
+    }
+
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+    .tab{
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 13px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      color: white;
+    }
+    .tab[aria-selected="true"]{
+      background: linear-gradient(135deg, rgba(46,229,157,.95), rgba(43,63,255,.95));
+      border-color: rgba(255,255,255,.28);
+    }
+
+    .difficulty{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    select{
+      appearance:none;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.18);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 12px 22px rgba(0,0,0,.18);
+    }
+
+    .quiz{
+      display:grid;
+      gap:14px;
+      align-items:center;
+      grid-template-columns: 1fr;
+    }
+
+    .flagBox{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      min-height: 180px;
+      position:relative;
+    }
+
+    .flagImg{
+      width: 100%;
+      max-width: 420px;
+      height:auto;
+      border-radius: 14px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.22);
+    }
+
+    .flagHint{
+      position:absolute;
+      top:10px;
+      left:10px;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.30);
+      border: 1px solid rgba(255,255,255,.18);
+      color: var(--muted);
+    }
+
+    .question{
+      font-size: clamp(18px, 2.8vw, 26px);
+      font-weight: 1000;
+      margin: 0;
+    }
+
+    .answers{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+
+    .answerBtn{
+      text-align:left;
+      padding: 14px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 12px 22px rgba(0,0,0,.20);
+      font-weight: 950;
+      font-size: 16px;
+      letter-spacing: .2px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      word-break: break-word;
+    }
+    .answerBtn:hover{ filter: brightness(1.06); }
+
+    .answerBtn[disabled]{ cursor:not-allowed; opacity:.85; }
+
+    .badge{
+      font-size:12px;
+      font-weight: 1000;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.16);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+
+    .answerBtn.correct{
+      background: linear-gradient(135deg, rgba(46,229,157,.90), rgba(43,63,255,.55));
+      border-color: rgba(255,255,255,.30);
+    }
+    .answerBtn.wrong{
+      background: linear-gradient(135deg, rgba(255,92,122,.92), rgba(255,209,102,.35));
+      border-color: rgba(255,255,255,.25);
+    }
+
+    .feedback{
+      margin-top: 6px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.14);
+      display:none;
+    }
+    .feedback.show{ display:block; }
+
+    .feedbackTitle{ font-weight: 1000; margin:0 0 6px; }
+    .feedbackBody{ margin:0; color: var(--muted); line-height:1.35; }
+
+    .nextRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-top: 10px; }
+
+    .progressBarWrap{
+      height: 12px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      overflow:hidden;
+      flex:1;
+      min-width: 160px;
+    }
+    .progressBar{
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(46,229,157,1), rgba(43,63,255,1), rgba(255,61,154,1));
+      border-radius: 999px;
+      transition: width .35s ease;
+    }
+
+    .learnGrid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .learnItem{
+      border-radius: 16px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 10px;
+      box-shadow: 0 12px 22px rgba(0,0,0,.18);
+      display:grid;
+      gap:8px;
+      align-content:start;
+    }
+    .learnItem img{
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.10);
+    }
+    .learnItem .name{ font-weight: 1000; }
+    .learnItem .fact{ color: var(--muted); font-size: 13px; line-height:1.25; }
+
+    .footerNote{
+      color: rgba(255,255,255,.75);
+      font-size: 12px;
+      margin-top: 12px;
+      text-align:center;
+    }
+
+    /* Confetti canvas */
+    #fxCanvas{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:999;
+    }
+
+    /* Little wiggle animation */
+    @keyframes pop {
+      0%{ transform: scale(.9); opacity:.4; }
+      60%{ transform: scale(1.02); opacity:1; }
+      100%{ transform: scale(1); }
+    }
+    .pop{ animation: pop .22s ease-out; }
+
+    @media (min-width: 820px){
+      .grid{ grid-template-columns: 1.2fr .8fr; align-items:start; }
+      .quiz{ grid-template-columns: 1.05fr .95fr; }
+      .answers{ grid-template-columns: 1fr; }
+      .learnGrid{ grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ transition:none !important; animation:none !important; scroll-behavior:auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fxCanvas"></canvas>
+
+  <header>
+    <div class="wrap">
+      <div class="topRow">
+        <div>
+          <h1>Flags of the World — Silas Quiz</h1>
+          <p class="sub">Pick the right country. Build a streak. Become a flag ninja.</p>
+        </div>
+        <div class="btnRow">
+          <button id="btnReset" class="secondary" title="Reset your progress">Reset</button>
+        </div>
+      </div>
+
+      <div class="pillRow">
+        <div class="pills">
+          <div class="pill">Score: <b id="score">0</b></div>
+          <div class="pill">Streak: <b id="streak">0</b></div>
+          <div class="pill">Best streak: <b id="bestStreak">0</b></div>
+          <div class="pill">Learned: <b id="learned">0</b>/<span id="poolSize">0</span></div>
+        </div>
+        <div class="btnRow">
+          <button id="btnSound" class="secondary" title="Toggle sound">Sound: ON</button>
+          <button id="btnNext" title="Next flag">Next ➜</button>
+        </div>
+      </div>
+
+      <div class="modeTabs">
+        <div class="tabs" role="tablist" aria-label="Mode">
+          <button class="tab" role="tab" id="tabQuiz" aria-selected="true">Quiz Mode</button>
+          <button class="tab" role="tab" id="tabLearn" aria-selected="false">Learn Mode</button>
+        </div>
+        <div class="difficulty">
+          <span class="pill" style="margin:0">Difficulty</span>
+          <select id="difficultySelect" aria-label="Difficulty">
+            <option value="easy">Easy ⭐</option>
+            <option value="medium">Medium ⭐⭐</option>
+            <option value="hard">Hard ⭐⭐⭐</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card" id="quizCard">
+        <div class="quiz">
+          <div class="flagBox">
+            <div class="flagHint" id="flagHint">Loading…</div>
+            <img id="flagImg" class="flagImg" alt="Flag" src="https://flagcdn.com/w640/un.png" />
+          </div>
+          <div>
+            <p class="question" id="question">Which country is this flag?</p>
+            <div class="answers" id="answers"></div>
+
+            <div id="feedback" class="feedback" aria-live="polite">
+              <p class="feedbackTitle" id="feedbackTitle"></p>
+              <p class="feedbackBody" id="feedbackBody"></p>
+            </div>
+
+            <div class="nextRow">
+              <div class="progressBarWrap" aria-label="Progress">
+                <div class="progressBar" id="progressBar"></div>
+              </div>
+              <button id="btnLearnThis" class="secondary" title="Mark this flag as learned">I know this one ✅</button>
+            </div>
+
+            <div class="footerNote">Tip: If you get it wrong, no worries — the goal is to learn!</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" id="sideCard">
+        <h2 style="margin:0 0 10px; font-size:18px">Your Mission</h2>
+        <div style="display:grid; gap:10px">
+          <div class="pill" style="justify-content:space-between">
+            <span>Daily challenge</span>
+            <span class="badge" id="challenge">Get a 5 streak</span>
+          </div>
+          <div class="pill" style="justify-content:space-between">
+            <span>Streak bonus</span>
+            <span class="badge" id="bonus">x1</span>
+          </div>
+          <div class="pill" style="justify-content:space-between">
+            <span>Mode</span>
+            <span class="badge" id="modeBadge">Quiz</span>
+          </div>
+
+          <div class="card" style="padding:12px; background: rgba(255,255,255,.06)">
+            <div style="font-weight:1000; margin-bottom:6px">How scoring works</div>
+            <div style="color:var(--muted); font-size:13px; line-height:1.35">
+              Correct = <b>+10</b>. If you have a streak, you get a bonus.
+              Wrong = no penalty (because learning is awesome).
+            </div>
+          </div>
+
+          <button id="btnShuffle" class="ghost">Shuffle Flags 🔀</button>
+        </div>
+      </aside>
+
+      <section class="card" id="learnCard" style="display:none">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap">
+          <h2 style="margin:0; font-size:18px">Learn Mode</h2>
+          <div class="pill">Tap a flag, then go back to Quiz Mode!</div>
+        </div>
+        <div style="margin-top:12px" class="learnGrid" id="learnGrid"></div>
+        <div class="footerNote">Flags are loaded from <span style="opacity:.9">flagcdn.com</span>. Works offline-ish after they are cached.</div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    /*********************
+     * Data
+     *********************/
+    // Using ISO 3166-1 alpha-2 codes for flagcdn.
+    // Facts are kid-friendly and short.
+    const COUNTRY_BANK = {
+      easy: [
+        { code:'us', name:'United States', fact:'50 stars = 50 states!' },
+        { code:'ca', name:'Canada', fact:'The leaf is a maple leaf.' },
+        { code:'mx', name:'Mexico', fact:'The eagle and snake are from an old legend.' },
+        { code:'br', name:'Brazil', fact:'The green and yellow are super famous in sports.' },
+        { code:'ar', name:'Argentina', fact:'The sun is called the Sun of May.' },
+        { code:'gb', name:'United Kingdom', fact:'It combines crosses from different nations.' },
+        { code:'fr', name:'France', fact:'Blue–white–red is called the Tricolour.' },
+        { code:'de', name:'Germany', fact:'Black–red–gold is a classic trio.' },
+        { code:'it', name:'Italy', fact:'Green–white–red like a tasty pizza vibe.' },
+        { code:'es', name:'Spain', fact:'The coat of arms tells a long story.' },
+        { code:'pt', name:'Portugal', fact:'The shield comes from old kingdoms.' },
+        { code:'nl', name:'Netherlands', fact:'Red–white–blue inspired other flags too.' },
+        { code:'be', name:'Belgium', fact:'The stripes are vertical.' },
+        { code:'ch', name:'Switzerland', fact:'One of the only square flags!' },
+        { code:'se', name:'Sweden', fact:'The Nordic cross style is used in nearby countries.' },
+        { code:'no', name:'Norway', fact:'Nordic cross = a cross that reaches the edges.' },
+        { code:'dk', name:'Denmark', fact:'It’s one of the oldest flags still used.' },
+        { code:'fi', name:'Finland', fact:'Blue cross on white like snow and lakes.' },
+        { code:'jp', name:'Japan', fact:'The red circle represents the sun.' },
+        { code:'cn', name:'China', fact:'Five stars show unity.' },
+        { code:'in', name:'India', fact:'The blue wheel is the Ashoka Chakra.' },
+        { code:'au', name:'Australia', fact:'Southern Cross stars are in the sky there.' },
+        { code:'nz', name:'New Zealand', fact:'It has 4 red stars with white borders.' },
+        { code:'za', name:'South Africa', fact:'One flag shows many paths coming together.' },
+      ],
+      medium: [
+        // Mix of all continents (plus some smaller nations)
+        { code:'eg', name:'Egypt', fact:'The eagle is a powerful symbol.' },
+        { code:'ma', name:'Morocco', fact:'The green star is called the Seal of Solomon.' },
+        { code:'ng', name:'Nigeria', fact:'Green–white–green is easy to spot.' },
+        { code:'ke', name:'Kenya', fact:'The shield and spears show protection.' },
+        { code:'gh', name:'Ghana', fact:'The black star is famous!' },
+        { code:'et', name:'Ethiopia', fact:'One of the oldest independent countries in Africa.' },
+        { code:'sa', name:'Saudi Arabia', fact:'It includes Arabic writing.' },
+        { code:'tr', name:'Türkiye', fact:'The crescent and star are classic symbols.' },
+        { code:'il', name:'Israel', fact:'The star is called the Star of David.' },
+        { code:'ir', name:'Iran', fact:'A special pattern repeats along the borders.' },
+        { code:'pk', name:'Pakistan', fact:'The moon and star stand out at night.' },
+        { code:'th', name:'Thailand', fact:'The middle blue stripe is the biggest.' },
+        { code:'vn', name:'Vietnam', fact:'A single star in the center.' },
+        { code:'id', name:'Indonesia', fact:'Looks like Poland, but flipped!' },
+        { code:'ph', name:'Philippines', fact:'The sun has 8 rays!' },
+        { code:'kr', name:'South Korea', fact:'The symbols are about balance (yin-yang).' },
+        { code:'sg', name:'Singapore', fact:'Crescent + 5 stars.' },
+        { code:'gr', name:'Greece', fact:'Blue and white like sea and sky.' },
+        { code:'pl', name:'Poland', fact:'Looks like Indonesia, but flipped!' },
+        { code:'ua', name:'Ukraine', fact:'Blue sky over golden fields.' },
+        { code:'cz', name:'Czechia', fact:'A triangle plus stripes.' },
+        { code:'at', name:'Austria', fact:'Red–white–red is super old.' },
+        { code:'ie', name:'Ireland', fact:'Green–white–orange vertical stripes.' },
+        { code:'cl', name:'Chile', fact:'One star = “La Estrella Solitaria”.' },
+        { code:'co', name:'Colombia', fact:'The yellow stripe is extra wide.' },
+        { code:'pe', name:'Peru', fact:'Red–white–red, often with a crest.' },
+        { code:'cu', name:'Cuba', fact:'Triangle + star + stripes.' },
+        { code:'do', name:'Dominican Republic', fact:'A cross splits the flag into four parts.' },
+        { code:'jm', name:'Jamaica', fact:'It has a big X (saltire)!' },
+        { code:'is', name:'Iceland', fact:'Nordic cross with red and white.' },
+      ],
+      hard: [
+        // Smaller / less common flags for a kid
+        { code:'bt', name:'Bhutan', fact:'The dragon is called Druk (Thunder Dragon)!' },
+        { code:'np', name:'Nepal', fact:'The only non-rectangular national flag!' },
+        { code:'lk', name:'Sri Lanka', fact:'It has a lion holding a sword.' },
+        { code:'mn', name:'Mongolia', fact:'The symbol is called the Soyombo.' },
+        { code:'kz', name:'Kazakhstan', fact:'The eagle is soaring under the sun.' },
+        { code:'uz', name:'Uzbekistan', fact:'The stars and moon are near the top.' },
+        { code:'ge', name:'Georgia', fact:'Five crosses total.' },
+        { code:'am', name:'Armenia', fact:'Three horizontal stripes: red, blue, orange.' },
+        { code:'az', name:'Azerbaijan', fact:'Crescent + star on a blue-red-green flag.' },
+        { code:'md', name:'Moldova', fact:'Similar colors to Romania, but with a crest.' },
+        { code:'ro', name:'Romania', fact:'Blue–yellow–red vertical stripes.' },
+        { code:'bg', name:'Bulgaria', fact:'White–green–red horizontal stripes.' },
+        { code:'al', name:'Albania', fact:'A black double-headed eagle!' },
+        { code:'ba', name:'Bosnia and Herzegovina', fact:'Blue with yellow triangle and stars.' },
+        { code:'mk', name:'North Macedonia', fact:'A bright sun with rays.' },
+        { code:'si', name:'Slovenia', fact:'It has a mountain and stars in the shield.' },
+        { code:'sk', name:'Slovakia', fact:'A double cross in the crest.' },
+        { code:'ee', name:'Estonia', fact:'Blue–black–white stripes.' },
+        { code:'lv', name:'Latvia', fact:'A dark red with a thin white stripe.' },
+        { code:'lt', name:'Lithuania', fact:'Yellow–green–red stripes.' },
+        { code:'mt', name:'Malta', fact:'A small cross in the corner.' },
+        { code:'cy', name:'Cyprus', fact:'The map of the island is on the flag!' },
+        { code:'rw', name:'Rwanda', fact:'A sun in the top right corner.' },
+        { code:'sn', name:'Senegal', fact:'Green star in the middle.' },
+        { code:'tn', name:'Tunisia', fact:'A red flag with a white circle and crescent.' },
+        { code:'mz', name:'Mozambique', fact:'One flag includes a book and a hoe.' },
+        { code:'na', name:'Namibia', fact:'Diagonal stripe with a sun.' },
+        { code:'fj', name:'Fiji', fact:'Light blue with a shield.' },
+        { code:'pg', name:'Papua New Guinea', fact:'A bird-of-paradise is on it.' },
+        { code:'sb', name:'Solomon Islands', fact:'Diagonal split with stars.' },
+        { code:'vu', name:'Vanuatu', fact:'A boar’s tusk symbol appears.' },
+        { code:'bb', name:'Barbados', fact:'A black trident in the center.' },
+        { code:'tt', name:'Trinidad and Tobago', fact:'A bold diagonal stripe!' },
+        { code:'bs', name:'Bahamas', fact:'Triangle on the left with sea colors.' },
+        { code:'bz', name:'Belize', fact:'People and tools show history and work.' },
+        { code:'sr', name:'Suriname', fact:'A big star on a green-red-green flag.' },
+        { code:'uy', name:'Uruguay', fact:'A sun with a face — hello!' },
+        { code:'qa', name:'Qatar', fact:'Maroon and white with a zigzag edge.' },
+      ]
+    };
+
+    const FLAG_CDN = (code) => `https://flagcdn.com/w640/${code}.png`;
+
+    /*********************
+     * State + Storage
+     *********************/
+    const LS_KEY = 'silasFlagGame_v1';
+    const defaultState = {
+      difficulty: 'easy',
+      mode: 'quiz',
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      soundOn: true,
+      learnedByDiff: { easy:{}, medium:{}, hard:{} },
+      seenByDiff: { easy:{}, medium:{}, hard:{} },
+      lastCountryCode: null,
+      shuffledSeed: Math.floor(Math.random()*1e9)
+    };
+
+    const state = loadState();
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return structuredClone(defaultState);
+        const parsed = JSON.parse(raw);
+        // merge shallowly
+        const merged = structuredClone(defaultState);
+        Object.assign(merged, parsed);
+        merged.learnedByDiff = Object.assign(structuredClone(defaultState.learnedByDiff), parsed.learnedByDiff||{});
+        merged.seenByDiff = Object.assign(structuredClone(defaultState.seenByDiff), parsed.seenByDiff||{});
+        return merged;
+      }catch(e){
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState(){
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    }
+
+    /*********************
+     * UI Elements
+     *********************/
+    const els = {
+      score: document.getElementById('score'),
+      streak: document.getElementById('streak'),
+      bestStreak: document.getElementById('bestStreak'),
+      learned: document.getElementById('learned'),
+      poolSize: document.getElementById('poolSize'),
+      answers: document.getElementById('answers'),
+      question: document.getElementById('question'),
+      feedback: document.getElementById('feedback'),
+      feedbackTitle: document.getElementById('feedbackTitle'),
+      feedbackBody: document.getElementById('feedbackBody'),
+      flagImg: document.getElementById('flagImg'),
+      flagHint: document.getElementById('flagHint'),
+      progressBar: document.getElementById('progressBar'),
+      btnNext: document.getElementById('btnNext'),
+      btnReset: document.getElementById('btnReset'),
+      btnSound: document.getElementById('btnSound'),
+      btnLearnThis: document.getElementById('btnLearnThis'),
+      btnShuffle: document.getElementById('btnShuffle'),
+      tabQuiz: document.getElementById('tabQuiz'),
+      tabLearn: document.getElementById('tabLearn'),
+      quizCard: document.getElementById('quizCard'),
+      learnCard: document.getElementById('learnCard'),
+      learnGrid: document.getElementById('learnGrid'),
+      difficultySelect: document.getElementById('difficultySelect'),
+      modeBadge: document.getElementById('modeBadge'),
+      bonus: document.getElementById('bonus'),
+      challenge: document.getElementById('challenge')
+    };
+
+    /*********************
+     * Sound (no external files)
+     *********************/
+    let audioCtx = null;
+    function ensureAudio(){
+      if(!state.soundOn) return null;
+      if(!audioCtx){
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if(!AC) return null;
+        audioCtx = new AC();
+      }
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function beep(pattern){
+      const ctx = ensureAudio();
+      if(!ctx) return;
+      const now = ctx.currentTime;
+      let t = now;
+      for(const step of pattern){
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = step.type || 'triangle';
+        o.frequency.value = step.freq;
+        g.gain.value = 0.0001;
+        o.connect(g); g.connect(ctx.destination);
+        o.start(t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(step.gain ?? 0.14, t+0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + (step.dur ?? 0.12));
+        o.stop(t + (step.dur ?? 0.12) + 0.02);
+        t += (step.dur ?? 0.12) + (step.gap ?? 0.03);
+      }
+    }
+
+    const sfx = {
+      correct(){
+        beep([
+          {freq: 660, dur:0.08, gain:0.14},
+          {freq: 880, dur:0.10, gain:0.16},
+          {freq: 990, dur:0.12, gain:0.16}
+        ]);
+      },
+      wrong(){
+        beep([
+          {freq: 220, dur:0.12, gain:0.16, type:'sawtooth'},
+          {freq: 180, dur:0.14, gain:0.14, type:'sawtooth'}
+        ]);
+      },
+      click(){
+        beep([{freq: 520, dur:0.05, gain:0.09}]);
+      }
+    };
+
+    /*********************
+     * Confetti
+     *********************/
+    const fxCanvas = document.getElementById('fxCanvas');
+    const fx = fxCanvas.getContext('2d');
+    let particles = [];
+    let raf = null;
+
+    function resizeCanvas(){
+      const dpr = window.devicePixelRatio || 1;
+      fxCanvas.width = Math.floor(window.innerWidth * dpr);
+      fxCanvas.height = Math.floor(window.innerHeight * dpr);
+      fx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function burstConfetti(){
+      const n = 120;
+      const cx = window.innerWidth * 0.5;
+      const cy = window.innerHeight * 0.22;
+      const colors = ['#2ee59d','#ffd166','#ff3d9a','#2b3fff','#ffffff'];
+      for(let i=0;i<n;i++){
+        particles.push({
+          x: cx,
+          y: cy,
+          vx: (Math.random()*2-1) * (3 + Math.random()*5),
+          vy: - (4 + Math.random()*7),
+          g: 0.18 + Math.random()*0.18,
+          r: 2 + Math.random()*4,
+          a: 1,
+          rot: Math.random()*Math.PI,
+          vr: (Math.random()*2-1) * 0.2,
+          color: colors[(Math.random()*colors.length)|0]
+        });
+      }
+      if(!raf) raf = requestAnimationFrame(tickFx);
+    }
+
+    function tickFx(){
+      fx.clearRect(0,0,window.innerWidth, window.innerHeight);
+      particles = particles.filter(p => p.a > 0.02 && p.y < window.innerHeight + 40);
+      for(const p of particles){
+        p.vy += p.g;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        p.a *= 0.985;
+        fx.save();
+        fx.globalAlpha = p.a;
+        fx.translate(p.x, p.y);
+        fx.rotate(p.rot);
+        fx.fillStyle = p.color;
+        fx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+        fx.restore();
+      }
+      if(particles.length){
+        raf = requestAnimationFrame(tickFx);
+      }else{
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    }
+
+    /*********************
+     * Helpers
+     *********************/
+    function mulberry32(a){
+      return function() {
+        let t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+
+    function shuffle(arr, seed){
+      const rng = mulberry32(seed);
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(rng()*(i+1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function sample(arr){
+      return arr[(Math.random()*arr.length)|0];
+    }
+
+    function uniqueByCode(list){
+      const m = new Map();
+      for(const c of list) m.set(c.code, c);
+      return [...m.values()];
+    }
+
+    function getPool(){
+      const pool = uniqueByCode(COUNTRY_BANK[state.difficulty]);
+      return shuffle(pool, state.shuffledSeed + (state.difficulty==='easy'?1:state.difficulty==='medium'?2:3));
+    }
+
+    function learnedCount(){
+      const learned = state.learnedByDiff[state.difficulty] || {};
+      return Object.keys(learned).length;
+    }
+
+    function seenCount(){
+      const seen = state.seenByDiff[state.difficulty] || {};
+      return Object.keys(seen).length;
+    }
+
+    function setMode(mode){
+      state.mode = mode;
+      saveState();
+      const quiz = mode === 'quiz';
+      els.quizCard.style.display = quiz ? '' : 'none';
+      els.sideCard.style.display = quiz ? '' : 'none';
+      els.learnCard.style.display = quiz ? 'none' : '';
+      els.tabQuiz.setAttribute('aria-selected', quiz ? 'true' : 'false');
+      els.tabLearn.setAttribute('aria-selected', quiz ? 'false' : 'true');
+      els.modeBadge.textContent = quiz ? 'Quiz' : 'Learn';
+      if(!quiz) renderLearnMode();
+      if(quiz) newQuestion();
+    }
+
+    function setDifficulty(diff){
+      state.difficulty = diff;
+      // Reset streak when switching (keeps it simple and fair)
+      state.streak = 0;
+      saveState();
+      updateStats();
+      renderLearnMode();
+      if(state.mode==='quiz') newQuestion();
+    }
+
+    function setSound(on){
+      state.soundOn = on;
+      els.btnSound.textContent = `Sound: ${on ? 'ON' : 'OFF'}`;
+      saveState();
+    }
+
+    function updateStats(){
+      els.score.textContent = state.score;
+      els.streak.textContent = state.streak;
+      els.bestStreak.textContent = state.bestStreak;
+      const pool = getPool();
+      els.poolSize.textContent = pool.length;
+      els.learned.textContent = learnedCount();
+      const pct = pool.length ? Math.round((learnedCount()/pool.length)*100) : 0;
+      els.progressBar.style.width = `${pct}%`;
+
+      const bonus = 1 + Math.floor(state.streak/3);
+      els.bonus.textContent = `x${bonus}`;
+
+      // Cute challenge text
+      if(state.bestStreak >= 10) els.challenge.textContent = 'Try a 12 streak!';
+      else if(state.bestStreak >= 5) els.challenge.textContent = 'Try a 10 streak!';
+      else els.challenge.textContent = 'Get a 5 streak';
+
+      els.difficultySelect.value = state.difficulty;
+      els.btnLearnThis.disabled = !currentQuestion;
+    }
+
+    function flagAltText(country){
+      return `Flag of ${country.name}`;
+    }
+
+    /*********************
+     * Quiz Engine
+     *********************/
+    let currentQuestion = null;
+    let locked = false;
+
+    function pickNextCountry(pool){
+      // Prefer unlearned and not repeated from last
+      const learned = state.learnedByDiff[state.difficulty] || {};
+      const candidates = pool.filter(c => !learned[c.code] && c.code !== state.lastCountryCode);
+      const fallback = pool.filter(c => c.code !== state.lastCountryCode);
+      const pickFrom = candidates.length ? candidates : fallback.length ? fallback : pool;
+
+      // also add variety: try to prioritize unseen
+      const seen = state.seenByDiff[state.difficulty] || {};
+      const unseen = pickFrom.filter(c => !seen[c.code]);
+      return sample(unseen.length ? unseen : pickFrom);
+    }
+
+    function buildChoices(correct, pool){
+      const others = pool.filter(c => c.code !== correct.code);
+      const choices = [correct];
+      while(choices.length < 4 && others.length){
+        const c = sample(others);
+        if(!choices.some(x => x.code === c.code)) choices.push(c);
+      }
+      // In the rare case pool is tiny
+      while(choices.length < 4) choices.push(correct);
+      return shuffle(choices, Math.floor(Math.random()*1e9));
+    }
+
+    async function newQuestion(){
+      locked = false;
+      els.feedback.classList.remove('show');
+      els.feedbackTitle.textContent = '';
+      els.feedbackBody.textContent = '';
+      els.answers.innerHTML = '';
+
+      const pool = getPool();
+      if(pool.length < 4){
+        els.question.textContent = 'Not enough flags in this difficulty.';
+        return;
+      }
+
+      const correct = pickNextCountry(pool);
+      currentQuestion = { correct, choices: buildChoices(correct, pool) };
+
+      // mark seen
+      state.seenByDiff[state.difficulty][correct.code] = Date.now();
+      state.lastCountryCode = correct.code;
+      saveState();
+
+      els.flagHint.textContent = `${state.difficulty.toUpperCase()} • Tap an answer`;
+      els.flagImg.classList.remove('pop');
+      els.flagImg.src = FLAG_CDN(correct.code);
+      els.flagImg.alt = flagAltText(correct);
+      els.flagImg.onload = () => els.flagImg.classList.add('pop');
+      els.flagImg.onerror = () => {
+        // If CDN image fails, show a simple placeholder
+        els.flagHint.textContent = 'Oops — flag image did not load. Tap Next.';
+      };
+
+      els.question.textContent = 'Which country is this flag?';
+
+      for(const choice of currentQuestion.choices){
+        const btn = document.createElement('button');
+        btn.className = 'answerBtn';
+        btn.type = 'button';
+        btn.innerHTML = `<span>${escapeHtml(choice.name)}</span><span class="badge">Choose</span>`;
+        btn.addEventListener('click', () => handleAnswer(btn, choice));
+        els.answers.appendChild(btn);
+      }
+
+      updateStats();
+    }
+
+    function handleAnswer(btn, choice){
+      if(!currentQuestion || locked) return;
+      locked = true;
+
+      const correct = currentQuestion.correct;
+      const allButtons = [...els.answers.querySelectorAll('button')];
+      allButtons.forEach(b => b.disabled = true);
+
+      const isCorrect = choice.code === correct.code;
+      const bonus = 1 + Math.floor(state.streak/3);
+
+      if(isCorrect){
+        btn.classList.add('correct');
+        btn.querySelector('.badge').textContent = 'Correct!';
+
+        state.streak += 1;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
+        state.score += 10 * bonus;
+
+        // Auto-mark learned after 2 correct streaks in a row for this flag
+        // (simple approach: mark learned on correct if already seen before)
+        const seen = state.seenByDiff[state.difficulty][correct.code];
+        if(seen){
+          // If they got it right, we consider it learned.
+          state.learnedByDiff[state.difficulty][correct.code] = Date.now();
+        }
+
+        saveState();
+        updateStats();
+        sfx.correct();
+        burstConfetti();
+
+        showFeedback('🎉 You got it!', `${correct.name}. Fun fact: ${correct.fact}`);
+
+      }else{
+        btn.classList.add('wrong');
+        btn.querySelector('.badge').textContent = 'Not this one';
+
+        // highlight the correct one
+        for(const b of allButtons){
+          const name = b.querySelector('span')?.textContent;
+          if(name === correct.name){
+            b.classList.add('correct');
+            b.querySelector('.badge').textContent = 'This one ✅';
+          }
+        }
+
+        state.streak = 0;
+        saveState();
+        updateStats();
+        sfx.wrong();
+
+        showFeedback('So close — keep going!', `That was ${correct.name}. Fun fact: ${correct.fact}`);
+      }
+
+      // Unlock next after a short moment
+      setTimeout(() => { locked = false; }, 250);
+    }
+
+    function showFeedback(title, body){
+      els.feedbackTitle.textContent = title;
+      els.feedbackBody.textContent = body;
+      els.feedback.classList.add('show');
+    }
+
+    function markLearnedCurrent(){
+      if(!currentQuestion) return;
+      const c = currentQuestion.correct;
+      state.learnedByDiff[state.difficulty][c.code] = Date.now();
+      saveState();
+      updateStats();
+      sfx.click();
+      showFeedback('Nice!', `${c.name} marked as learned. Now keep collecting flags!`);
+    }
+
+    /*********************
+     * Learn Mode
+     *********************/
+    function renderLearnMode(){
+      if(state.mode !== 'learn') return;
+      const pool = getPool();
+      const learned = state.learnedByDiff[state.difficulty] || {};
+      els.learnGrid.innerHTML = '';
+
+      for(const c of pool){
+        const item = document.createElement('div');
+        item.className = 'learnItem';
+        const isLearned = !!learned[c.code];
+        item.innerHTML = `
+          <img loading="lazy" src="${FLAG_CDN(c.code)}" alt="${escapeHtml(flagAltText(c))}">
+          <div class="name">${escapeHtml(c.name)} ${isLearned ? '✅' : ''}</div>
+          <div class="fact">${escapeHtml(c.fact)}</div>
+          <button class="secondary" style="border-radius:14px; padding:10px 12px">${isLearned ? 'Learned!' : 'Mark learned'}</button>
+        `;
+        const btn = item.querySelector('button');
+        btn.addEventListener('click', () => {
+          state.learnedByDiff[state.difficulty][c.code] = Date.now();
+          saveState();
+          updateStats();
+          renderLearnMode();
+          sfx.correct();
+        });
+
+        item.addEventListener('click', (e) => {
+          // only if they clicked image/name area; avoid double when button clicked
+          if(e.target === btn) return;
+          // quick pop effect + optional sound
+          item.classList.remove('pop');
+          void item.offsetWidth;
+          item.classList.add('pop');
+          sfx.click();
+        });
+
+        els.learnGrid.appendChild(item);
+      }
+
+      els.flagHint.textContent = 'Learn Mode';
+    }
+
+    /*********************
+     * Safety helpers
+     *********************/
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    /*********************
+     * Events
+     *********************/
+    els.btnNext.addEventListener('click', () => { sfx.click(); newQuestion(); });
+    els.btnLearnThis.addEventListener('click', () => markLearnedCurrent());
+
+    els.btnSound.addEventListener('click', () => {
+      setSound(!state.soundOn);
+      sfx.click();
+    });
+
+    els.btnReset.addEventListener('click', () => {
+      const ok = confirm('Reset score, streak, and learned flags?');
+      if(!ok) return;
+      Object.assign(state, structuredClone(defaultState));
+      saveState();
+      setSound(true);
+      setDifficulty('easy');
+      setMode('quiz');
+      sfx.click();
+      updateStats();
+      newQuestion();
+    });
+
+    els.btnShuffle.addEventListener('click', () => {
+      state.shuffledSeed = Math.floor(Math.random()*1e9);
+      saveState();
+      sfx.click();
+      if(state.mode==='learn') renderLearnMode();
+      if(state.mode==='quiz') newQuestion();
+    });
+
+    els.tabQuiz.addEventListener('click', () => { sfx.click(); setMode('quiz'); });
+    els.tabLearn.addEventListener('click', () => { sfx.click(); setMode('learn'); });
+
+    els.difficultySelect.addEventListener('change', (e) => {
+      sfx.click();
+      setDifficulty(e.target.value);
+    });
+
+    // Unlock audio on first interaction (mobile browsers)
+    window.addEventListener('pointerdown', () => ensureAudio(), { once:true });
+
+    /*********************
+     * Init
+     *********************/
+    (function init(){
+      setSound(state.soundOn);
+      els.difficultySelect.value = state.difficulty;
+      setMode(state.mode);
+      updateStats();
+      if(state.mode==='quiz') newQuestion();
+      if(state.mode==='learn') renderLearnMode();
+    })();
+  </script>
+</body>
+</html>
