@@ -115,6 +115,16 @@
       border: 1px dashed rgba(255,255,255,.30);
       box-shadow:none;
     }
+    button.start{
+      font-size: 24px;
+      padding: 20px 40px;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46,229,157,.7); }
+      50% { transform: scale(1.03); box-shadow: 0 0 20px 10px rgba(46,229,157,.3); }
+    }
 
     main{ padding-top: 8px; }
 
@@ -216,6 +226,19 @@
       background: rgba(0,0,0,.30);
       border: 1px solid rgba(255,255,255,.18);
       color: var(--muted);
+    }
+
+    .strikes{
+      position:absolute;
+      top:10px;
+      right:10px;
+      font-size: 18px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.30);
+      border: 1px solid rgba(255,255,255,.18);
+      color: var(--bad);
+      letter-spacing: 2px;
     }
 
     .question{
@@ -338,6 +361,110 @@
       text-align:center;
     }
 
+    /* Start screen */
+    .startScreen{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      min-height: 300px;
+      text-align: center;
+    }
+    .startScreen .flagImg{
+      max-width: 280px;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .startScreen h2{
+      margin: 0;
+      font-size: clamp(24px, 4vw, 36px);
+    }
+    .startScreen p{
+      margin: 0;
+      color: var(--muted);
+      max-width: 300px;
+    }
+
+    /* Game Over screen */
+    .gameOverScreen{
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      min-height: 350px;
+      text-align: center;
+      padding: 30px;
+    }
+    .gameOverScreen.show{
+      display: flex;
+    }
+    .gameOverScreen h2{
+      margin: 0;
+      font-size: clamp(28px, 5vw, 42px);
+      color: var(--bad);
+    }
+    .gameOverScreen .finalScore{
+      font-size: clamp(60px, 12vw, 100px);
+      font-weight: 1000;
+      background: linear-gradient(135deg, var(--good), var(--btn), var(--btn2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .gameOverScreen .scoreLabel{
+      font-size: 18px;
+      color: var(--muted);
+      margin-top: -10px;
+    }
+    .gameOverScreen .stats{
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .gameOverScreen .stat{
+      text-align: center;
+    }
+    .gameOverScreen .statValue{
+      font-size: 28px;
+      font-weight: 1000;
+    }
+    .gameOverScreen .statLabel{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .gameOverScreen button{
+      font-size: 20px;
+      padding: 16px 32px;
+    }
+
+    /* Milestone celebration flash */
+    @keyframes celebrate {
+      0% { transform: scale(1); }
+      15% { transform: scale(1.15); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.1); }
+      60% { transform: scale(1); }
+      100% { transform: scale(1); }
+    }
+    .celebrate {
+      animation: celebrate 0.6s ease-out;
+    }
+
+    @keyframes flash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .flash {
+      animation: flash 0.15s ease-out 3;
+    }
+
     /* Confetti canvas */
     #fxCanvas{
       position:fixed;
@@ -353,6 +480,18 @@
       100%{ transform: scale(1); }
     }
     .pop{ animation: pop .22s ease-out; }
+
+    /* Level up animation */
+    @keyframes levelUp {
+      0% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.2) rotate(-5deg); }
+      50% { transform: scale(1.3) rotate(5deg); }
+      75% { transform: scale(1.2) rotate(-3deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .levelUp {
+      animation: levelUp 0.8s ease-out;
+    }
 
     @media (min-width: 820px){
       .grid{ grid-template-columns: 1.2fr .8fr; align-items:start; }
@@ -414,9 +553,41 @@
   <main class="wrap">
     <div class="grid">
       <section class="card" id="quizCard">
-        <div class="quiz">
+        <!-- Start Screen -->
+        <div class="startScreen" id="startScreen">
+          <img class="flagImg" src="https://flagcdn.com/w640/un.png" alt="United Nations Flag" />
+          <h2>🌍 Ready to explore?</h2>
+          <p>Test your knowledge of flags from around the world!</p>
+          <button class="start" id="btnStart">Start Game! 🚀</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div class="gameOverScreen" id="gameOverScreen">
+          <h2>💥 Game Over!</h2>
+          <div class="finalScore" id="finalScore">0</div>
+          <div class="scoreLabel">POINTS</div>
+          <div class="stats">
+            <div class="stat">
+              <div class="statValue" id="finalStreak">0</div>
+              <div class="statLabel">Best Streak</div>
+            </div>
+            <div class="stat">
+              <div class="statValue" id="finalLearned">0</div>
+              <div class="statLabel">Flags Learned</div>
+            </div>
+            <div class="stat">
+              <div class="statValue" id="finalLevel">Easy</div>
+              <div class="statLabel">Highest Level</div>
+            </div>
+          </div>
+          <button id="btnTryAgain">Try Again! 🔄</button>
+        </div>
+
+        <!-- Quiz Content -->
+        <div class="quiz" id="quizContent" style="display:none">
           <div class="flagBox">
             <div class="flagHint" id="flagHint">Loading…</div>
+            <div class="strikes" id="strikes">❤️❤️❤️</div>
             <img id="flagImg" class="flagImg" alt="Flag" src="https://flagcdn.com/w640/un.png" />
           </div>
           <div>
@@ -432,7 +603,6 @@
               <div class="progressBarWrap" aria-label="Progress">
                 <div class="progressBar" id="progressBar"></div>
               </div>
-              <button id="btnLearnThis" class="secondary" title="Mark this flag as learned">I know this one ✅</button>
             </div>
 
             <div class="footerNote">Tip: If you get it wrong, no worries — the goal is to learn!</div>
@@ -443,11 +613,11 @@
       <aside class="card" id="sideCard">
         <h2 style="margin:0 0 10px; font-size:18px">Your Mission</h2>
         <div style="display:grid; gap:10px">
-          <div class="pill" style="justify-content:space-between">
+          <div class="pill" id="challengePill" style="justify-content:space-between">
             <span>Daily challenge</span>
             <span class="badge" id="challenge">Get a 5 streak</span>
           </div>
-          <div class="pill" style="justify-content:space-between">
+          <div class="pill" id="bonusPill" style="justify-content:space-between">
             <span>Streak bonus</span>
             <span class="badge" id="bonus">x1</span>
           </div>
@@ -460,7 +630,7 @@
             <div style="font-weight:1000; margin-bottom:6px">How scoring works</div>
             <div style="color:var(--muted); font-size:13px; line-height:1.35">
               Correct = <b>+10</b>. If you have a streak, you get a bonus.
-              Wrong = no penalty (because learning is awesome).
+              3 wrong = Game Over! But you can always try again!
             </div>
           </div>
 
@@ -471,7 +641,7 @@
       <section class="card" id="learnCard" style="display:none">
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap">
           <h2 style="margin:0; font-size:18px">Learn Mode</h2>
-          <div class="pill">Tap a flag, then go back to Quiz Mode!</div>
+          <div class="pill">Study the flags, then go Quiz!</div>
         </div>
         <div style="margin-top:12px" class="learnGrid" id="learnGrid"></div>
         <div class="footerNote">Flags are loaded from <span style="opacity:.9">flagcdn.com</span>. Works offline-ish after they are cached.</div>
@@ -503,7 +673,7 @@
         { code:'ch', name:'Switzerland', fact:'One of the only square flags!' },
         { code:'se', name:'Sweden', fact:'The Nordic cross style is used in nearby countries.' },
         { code:'no', name:'Norway', fact:'Nordic cross = a cross that reaches the edges.' },
-        { code:'dk', name:'Denmark', fact:'It’s one of the oldest flags still used.' },
+        { code:'dk', name:'Denmark', fact:'It's one of the oldest flags still used.' },
         { code:'fi', name:'Finland', fact:'Blue cross on white like snow and lakes.' },
         { code:'jp', name:'Japan', fact:'The red circle represents the sun.' },
         { code:'cn', name:'China', fact:'Five stars show unity.' },
@@ -511,80 +681,162 @@
         { code:'au', name:'Australia', fact:'Southern Cross stars are in the sky there.' },
         { code:'nz', name:'New Zealand', fact:'It has 4 red stars with white borders.' },
         { code:'za', name:'South Africa', fact:'One flag shows many paths coming together.' },
+        { code:'ru', name:'Russia', fact:'White, blue, and red horizontal stripes.' },
+        { code:'kr', name:'South Korea', fact:'The symbols are about balance (yin-yang).' },
+        { code:'ie', name:'Ireland', fact:'Green–white–orange vertical stripes.' },
+        { code:'gr', name:'Greece', fact:'Blue and white like sea and sky.' },
+        { code:'pl', name:'Poland', fact:'White on top, red on bottom.' },
+        { code:'at', name:'Austria', fact:'Red–white–red is super old.' },
+        { code:'hu', name:'Hungary', fact:'Red, white, and green horizontal stripes.' },
+        { code:'tr', name:'Türkiye', fact:'The crescent and star are classic symbols.' },
+        { code:'eg', name:'Egypt', fact:'The eagle is a powerful symbol.' },
+        { code:'th', name:'Thailand', fact:'The middle blue stripe is the biggest.' },
+        { code:'id', name:'Indonesia', fact:'Red on top, white on bottom.' },
+        { code:'my', name:'Malaysia', fact:'Has stripes AND a moon and star!' },
+        { code:'sg', name:'Singapore', fact:'Crescent + 5 stars.' },
+        { code:'vn', name:'Vietnam', fact:'A single star in the center.' },
+        { code:'ph', name:'Philippines', fact:'The sun has 8 rays!' },
+        { code:'cl', name:'Chile', fact:'One star = "La Estrella Solitaria".' },
+        { code:'co', name:'Colombia', fact:'The yellow stripe is extra wide.' },
+        { code:'pe', name:'Peru', fact:'Red–white–red, often with a crest.' },
+        { code:'ve', name:'Venezuela', fact:'Blue with stars and yellow, blue, red stripes.' },
+        { code:'ec', name:'Ecuador', fact:'Similar to Colombia but with a crest!' },
+        { code:'ke', name:'Kenya', fact:'The shield and spears show protection.' },
+        { code:'ng', name:'Nigeria', fact:'Green–white–green is easy to spot.' },
+        { code:'gh', name:'Ghana', fact:'The black star is famous!' },
+        { code:'ma', name:'Morocco', fact:'The green star is called the Seal of Solomon.' },
       ],
       medium: [
-        // Mix of all continents (plus some smaller nations)
-        { code:'eg', name:'Egypt', fact:'The eagle is a powerful symbol.' },
-        { code:'ma', name:'Morocco', fact:'The green star is called the Seal of Solomon.' },
-        { code:'ng', name:'Nigeria', fact:'Green–white–green is easy to spot.' },
-        { code:'ke', name:'Kenya', fact:'The shield and spears show protection.' },
-        { code:'gh', name:'Ghana', fact:'The black star is famous!' },
-        { code:'et', name:'Ethiopia', fact:'One of the oldest independent countries in Africa.' },
         { code:'sa', name:'Saudi Arabia', fact:'It includes Arabic writing.' },
-        { code:'tr', name:'Türkiye', fact:'The crescent and star are classic symbols.' },
         { code:'il', name:'Israel', fact:'The star is called the Star of David.' },
         { code:'ir', name:'Iran', fact:'A special pattern repeats along the borders.' },
         { code:'pk', name:'Pakistan', fact:'The moon and star stand out at night.' },
-        { code:'th', name:'Thailand', fact:'The middle blue stripe is the biggest.' },
-        { code:'vn', name:'Vietnam', fact:'A single star in the center.' },
-        { code:'id', name:'Indonesia', fact:'Looks like Poland, but flipped!' },
-        { code:'ph', name:'Philippines', fact:'The sun has 8 rays!' },
-        { code:'kr', name:'South Korea', fact:'The symbols are about balance (yin-yang).' },
-        { code:'sg', name:'Singapore', fact:'Crescent + 5 stars.' },
-        { code:'gr', name:'Greece', fact:'Blue and white like sea and sky.' },
-        { code:'pl', name:'Poland', fact:'Looks like Indonesia, but flipped!' },
+        { code:'et', name:'Ethiopia', fact:'One of the oldest independent countries in Africa.' },
         { code:'ua', name:'Ukraine', fact:'Blue sky over golden fields.' },
         { code:'cz', name:'Czechia', fact:'A triangle plus stripes.' },
-        { code:'at', name:'Austria', fact:'Red–white–red is super old.' },
-        { code:'ie', name:'Ireland', fact:'Green–white–orange vertical stripes.' },
-        { code:'cl', name:'Chile', fact:'One star = “La Estrella Solitaria”.' },
-        { code:'co', name:'Colombia', fact:'The yellow stripe is extra wide.' },
-        { code:'pe', name:'Peru', fact:'Red–white–red, often with a crest.' },
         { code:'cu', name:'Cuba', fact:'Triangle + star + stripes.' },
         { code:'do', name:'Dominican Republic', fact:'A cross splits the flag into four parts.' },
         { code:'jm', name:'Jamaica', fact:'It has a big X (saltire)!' },
         { code:'is', name:'Iceland', fact:'Nordic cross with red and white.' },
+        { code:'ro', name:'Romania', fact:'Blue–yellow–red vertical stripes.' },
+        { code:'bg', name:'Bulgaria', fact:'White–green–red horizontal stripes.' },
+        { code:'rs', name:'Serbia', fact:'Red, blue, white with a coat of arms.' },
+        { code:'hr', name:'Croatia', fact:'Has a checkered shield!' },
+        { code:'sk', name:'Slovakia', fact:'A double cross in the crest.' },
+        { code:'si', name:'Slovenia', fact:'It has a mountain and stars in the shield.' },
+        { code:'ee', name:'Estonia', fact:'Blue–black–white stripes.' },
+        { code:'lv', name:'Latvia', fact:'A dark red with a thin white stripe.' },
+        { code:'lt', name:'Lithuania', fact:'Yellow–green–red stripes.' },
+        { code:'cy', name:'Cyprus', fact:'The map of the island is on the flag!' },
+        { code:'mt', name:'Malta', fact:'A small cross in the corner.' },
+        { code:'lu', name:'Luxembourg', fact:'Like Netherlands but lighter blue.' },
+        { code:'uy', name:'Uruguay', fact:'A sun with a face — hello!' },
+        { code:'py', name:'Paraguay', fact:'Different emblem on each side!' },
+        { code:'bo', name:'Bolivia', fact:'Red, yellow, green horizontal stripes.' },
+        { code:'pa', name:'Panama', fact:'Four quarters with stars.' },
+        { code:'cr', name:'Costa Rica', fact:'Blue, white, red horizontal bands.' },
+        { code:'gt', name:'Guatemala', fact:'Blue and white with a quetzal bird.' },
+        { code:'hn', name:'Honduras', fact:'Blue stripes with 5 stars.' },
+        { code:'sv', name:'El Salvador', fact:'Blue and white with a crest.' },
+        { code:'ni', name:'Nicaragua', fact:'Blue, white, blue with a triangle.' },
+        { code:'tz', name:'Tanzania', fact:'Diagonal stripe design.' },
+        { code:'ug', name:'Uganda', fact:'Has a crane bird in the center!' },
+        { code:'zm', name:'Zambia', fact:'Eagle flying over green, red, orange, black.' },
+        { code:'zw', name:'Zimbabwe', fact:'Seven stripes with a bird.' },
+        { code:'sn', name:'Senegal', fact:'Green star in the middle.' },
+        { code:'ci', name:'Côte d\'Ivoire', fact:'Orange, white, green (like Ireland reversed!)' },
+        { code:'cm', name:'Cameroon', fact:'Green, red, yellow with a star.' },
+        { code:'ao', name:'Angola', fact:'Has a machete and gear.' },
+        { code:'dz', name:'Algeria', fact:'Green and white with crescent and star.' },
+        { code:'tn', name:'Tunisia', fact:'A red flag with a white circle and crescent.' },
+        { code:'lb', name:'Lebanon', fact:'Has a cedar tree!' },
+        { code:'jo', name:'Jordan', fact:'Black, white, green stripes with red triangle.' },
+        { code:'ae', name:'United Arab Emirates', fact:'Red, green, white, black stripes.' },
+        { code:'kw', name:'Kuwait', fact:'Green, white, red with black trapezoid.' },
+        { code:'qa', name:'Qatar', fact:'Maroon and white with a zigzag edge.' },
+        { code:'om', name:'Oman', fact:'Red, white, green with national emblem.' },
+        { code:'bd', name:'Bangladesh', fact:'Green with a red circle.' },
+        { code:'lk', name:'Sri Lanka', fact:'It has a lion holding a sword.' },
+        { code:'mm', name:'Myanmar', fact:'Red, green, yellow with a white star.' },
+        { code:'kh', name:'Cambodia', fact:'Has Angkor Wat temple on it!' },
+        { code:'la', name:'Laos', fact:'Blue, red with white circle.' },
+        { code:'np', name:'Nepal', fact:'The only non-rectangular national flag!' },
       ],
       hard: [
-        // Smaller / less common flags for a kid
         { code:'bt', name:'Bhutan', fact:'The dragon is called Druk (Thunder Dragon)!' },
-        { code:'np', name:'Nepal', fact:'The only non-rectangular national flag!' },
-        { code:'lk', name:'Sri Lanka', fact:'It has a lion holding a sword.' },
         { code:'mn', name:'Mongolia', fact:'The symbol is called the Soyombo.' },
         { code:'kz', name:'Kazakhstan', fact:'The eagle is soaring under the sun.' },
         { code:'uz', name:'Uzbekistan', fact:'The stars and moon are near the top.' },
+        { code:'tm', name:'Turkmenistan', fact:'Has 5 carpet patterns!' },
+        { code:'kg', name:'Kyrgyzstan', fact:'A sun with 40 rays (40 tribes)!' },
+        { code:'tj', name:'Tajikistan', fact:'Has a crown and 7 stars.' },
+        { code:'af', name:'Afghanistan', fact:'Has a mosque in the center.' },
         { code:'ge', name:'Georgia', fact:'Five crosses total.' },
         { code:'am', name:'Armenia', fact:'Three horizontal stripes: red, blue, orange.' },
         { code:'az', name:'Azerbaijan', fact:'Crescent + star on a blue-red-green flag.' },
         { code:'md', name:'Moldova', fact:'Similar colors to Romania, but with a crest.' },
-        { code:'ro', name:'Romania', fact:'Blue–yellow–red vertical stripes.' },
-        { code:'bg', name:'Bulgaria', fact:'White–green–red horizontal stripes.' },
         { code:'al', name:'Albania', fact:'A black double-headed eagle!' },
         { code:'ba', name:'Bosnia and Herzegovina', fact:'Blue with yellow triangle and stars.' },
         { code:'mk', name:'North Macedonia', fact:'A bright sun with rays.' },
-        { code:'si', name:'Slovenia', fact:'It has a mountain and stars in the shield.' },
-        { code:'sk', name:'Slovakia', fact:'A double cross in the crest.' },
-        { code:'ee', name:'Estonia', fact:'Blue–black–white stripes.' },
-        { code:'lv', name:'Latvia', fact:'A dark red with a thin white stripe.' },
-        { code:'lt', name:'Lithuania', fact:'Yellow–green–red stripes.' },
-        { code:'mt', name:'Malta', fact:'A small cross in the corner.' },
-        { code:'cy', name:'Cyprus', fact:'The map of the island is on the flag!' },
+        { code:'me', name:'Montenegro', fact:'Red with gold border and eagle.' },
+        { code:'xk', name:'Kosovo', fact:'Blue with gold map and stars.' },
+        { code:'by', name:'Belarus', fact:'Red, green with decorative pattern.' },
         { code:'rw', name:'Rwanda', fact:'A sun in the top right corner.' },
-        { code:'sn', name:'Senegal', fact:'Green star in the middle.' },
-        { code:'tn', name:'Tunisia', fact:'A red flag with a white circle and crescent.' },
         { code:'mz', name:'Mozambique', fact:'One flag includes a book and a hoe.' },
         { code:'na', name:'Namibia', fact:'Diagonal stripe with a sun.' },
+        { code:'bw', name:'Botswana', fact:'Light blue with black and white stripe.' },
+        { code:'sz', name:'Eswatini', fact:'Has a shield and spears!' },
+        { code:'ls', name:'Lesotho', fact:'Has a traditional hat on it!' },
+        { code:'mw', name:'Malawi', fact:'Black, red, green with rising sun.' },
+        { code:'mg', name:'Madagascar', fact:'White, red, green vertical stripes.' },
+        { code:'mu', name:'Mauritius', fact:'Four horizontal colored stripes.' },
+        { code:'sc', name:'Seychelles', fact:'Rays of different colors!' },
+        { code:'gm', name:'Gambia', fact:'Red, blue, green horizontal with white borders.' },
+        { code:'gw', name:'Guinea-Bissau', fact:'Red, yellow, green with black star.' },
+        { code:'gn', name:'Guinea', fact:'Red, yellow, green vertical stripes.' },
+        { code:'ml', name:'Mali', fact:'Green, yellow, red vertical stripes.' },
+        { code:'bf', name:'Burkina Faso', fact:'Red, green with yellow star.' },
+        { code:'ne', name:'Niger', fact:'Orange, white, green with orange circle.' },
+        { code:'td', name:'Chad', fact:'Blue, yellow, red (almost like Romania!)' },
+        { code:'cf', name:'Central African Republic', fact:'Four stripes with a star.' },
+        { code:'cg', name:'Republic of the Congo', fact:'Green, yellow, red diagonal.' },
+        { code:'cd', name:'DR Congo', fact:'Blue with yellow star and red stripe.' },
+        { code:'ga', name:'Gabon', fact:'Green, yellow, blue horizontal.' },
+        { code:'gq', name:'Equatorial Guinea', fact:'Green, white, red with blue triangle.' },
+        { code:'st', name:'São Tomé and Príncipe', fact:'Green, yellow, green with stars.' },
+        { code:'cv', name:'Cape Verde', fact:'Blue with stars in a circle.' },
+        { code:'mr', name:'Mauritania', fact:'Green with gold crescent and star.' },
+        { code:'er', name:'Eritrea', fact:'Red triangle with olive branch.' },
+        { code:'dj', name:'Djibouti', fact:'Light blue, green with white triangle.' },
+        { code:'so', name:'Somalia', fact:'Light blue with white star.' },
         { code:'fj', name:'Fiji', fact:'Light blue with a shield.' },
         { code:'pg', name:'Papua New Guinea', fact:'A bird-of-paradise is on it.' },
         { code:'sb', name:'Solomon Islands', fact:'Diagonal split with stars.' },
-        { code:'vu', name:'Vanuatu', fact:'A boar’s tusk symbol appears.' },
+        { code:'vu', name:'Vanuatu', fact:'A boar's tusk symbol appears.' },
+        { code:'ws', name:'Samoa', fact:'Red with blue rectangle and stars.' },
+        { code:'to', name:'Tonga', fact:'Red with white corner and cross.' },
+        { code:'ki', name:'Kiribati', fact:'Sun rising over waves with bird!' },
+        { code:'tv', name:'Tuvalu', fact:'Light blue with union jack and stars.' },
+        { code:'nr', name:'Nauru', fact:'Blue with yellow stripe and white star.' },
+        { code:'pw', name:'Palau', fact:'Light blue with yellow circle.' },
+        { code:'fm', name:'Micronesia', fact:'Light blue with four white stars.' },
+        { code:'mh', name:'Marshall Islands', fact:'Blue with orange and white rays.' },
         { code:'bb', name:'Barbados', fact:'A black trident in the center.' },
         { code:'tt', name:'Trinidad and Tobago', fact:'A bold diagonal stripe!' },
         { code:'bs', name:'Bahamas', fact:'Triangle on the left with sea colors.' },
         { code:'bz', name:'Belize', fact:'People and tools show history and work.' },
+        { code:'gy', name:'Guyana', fact:'Yellow arrow inside green!' },
         { code:'sr', name:'Suriname', fact:'A big star on a green-red-green flag.' },
-        { code:'uy', name:'Uruguay', fact:'A sun with a face — hello!' },
-        { code:'qa', name:'Qatar', fact:'Maroon and white with a zigzag edge.' },
+        { code:'ht', name:'Haiti', fact:'Blue and red with coat of arms.' },
+        { code:'ag', name:'Antigua and Barbuda', fact:'Sun rising over blue, white, black.' },
+        { code:'dm', name:'Dominica', fact:'Has a parrot in the middle!' },
+        { code:'gd', name:'Grenada', fact:'Red border with stars and nutmeg.' },
+        { code:'kn', name:'Saint Kitts and Nevis', fact:'Diagonal with two white stars.' },
+        { code:'lc', name:'Saint Lucia', fact:'Blue with yellow and black triangles.' },
+        { code:'vc', name:'Saint Vincent', fact:'Green, yellow, blue with diamonds.' },
+        { code:'bn', name:'Brunei', fact:'Yellow with black and white stripes.' },
+        { code:'tl', name:'Timor-Leste', fact:'Red, black, yellow triangle with star.' },
+        { code:'mv', name:'Maldives', fact:'Red with green rectangle and crescent.' },
       ]
     };
 
@@ -593,18 +845,23 @@
     /*********************
      * State + Storage
      *********************/
-    const LS_KEY = 'silasFlagGame_v1';
+    const LS_KEY = 'silasFlagGame_v2';
     const defaultState = {
       difficulty: 'easy',
       mode: 'quiz',
       score: 0,
       streak: 0,
+      correctInRow: 0,
       bestStreak: 0,
+      strikes: 0,
       soundOn: true,
+      gameStarted: false,
+      gameOver: false,
       learnedByDiff: { easy:{}, medium:{}, hard:{} },
       seenByDiff: { easy:{}, medium:{}, hard:{} },
       lastCountryCode: null,
-      shuffledSeed: Math.floor(Math.random()*1e9)
+      shuffledSeed: Math.floor(Math.random()*1e9),
+      milestonesHit: { daily5: false, daily10: false, daily12: false }
     };
 
     const state = loadState();
@@ -614,11 +871,11 @@
         const raw = localStorage.getItem(LS_KEY);
         if(!raw) return structuredClone(defaultState);
         const parsed = JSON.parse(raw);
-        // merge shallowly
         const merged = structuredClone(defaultState);
         Object.assign(merged, parsed);
         merged.learnedByDiff = Object.assign(structuredClone(defaultState.learnedByDiff), parsed.learnedByDiff||{});
         merged.seenByDiff = Object.assign(structuredClone(defaultState.seenByDiff), parsed.seenByDiff||{});
+        merged.milestonesHit = Object.assign(structuredClone(defaultState.milestonesHit), parsed.milestonesHit||{});
         return merged;
       }catch(e){
         return structuredClone(defaultState);
@@ -645,21 +902,33 @@
       feedbackBody: document.getElementById('feedbackBody'),
       flagImg: document.getElementById('flagImg'),
       flagHint: document.getElementById('flagHint'),
+      strikes: document.getElementById('strikes'),
       progressBar: document.getElementById('progressBar'),
       btnNext: document.getElementById('btnNext'),
       btnReset: document.getElementById('btnReset'),
       btnSound: document.getElementById('btnSound'),
-      btnLearnThis: document.getElementById('btnLearnThis'),
       btnShuffle: document.getElementById('btnShuffle'),
+      btnStart: document.getElementById('btnStart'),
+      btnTryAgain: document.getElementById('btnTryAgain'),
       tabQuiz: document.getElementById('tabQuiz'),
       tabLearn: document.getElementById('tabLearn'),
       quizCard: document.getElementById('quizCard'),
       learnCard: document.getElementById('learnCard'),
       learnGrid: document.getElementById('learnGrid'),
+      startScreen: document.getElementById('startScreen'),
+      gameOverScreen: document.getElementById('gameOverScreen'),
+      quizContent: document.getElementById('quizContent'),
       difficultySelect: document.getElementById('difficultySelect'),
       modeBadge: document.getElementById('modeBadge'),
       bonus: document.getElementById('bonus'),
-      challenge: document.getElementById('challenge')
+      bonusPill: document.getElementById('bonusPill'),
+      challenge: document.getElementById('challenge'),
+      challengePill: document.getElementById('challengePill'),
+      finalScore: document.getElementById('finalScore'),
+      finalStreak: document.getElementById('finalStreak'),
+      finalLearned: document.getElementById('finalLearned'),
+      finalLevel: document.getElementById('finalLevel'),
+      sideCard: document.getElementById('sideCard')
     };
 
     /*********************
@@ -714,6 +983,30 @@
       },
       click(){
         beep([{freq: 520, dur:0.05, gain:0.09}]);
+      },
+      levelUp(){
+        beep([
+          {freq: 523, dur:0.1, gain:0.16},
+          {freq: 659, dur:0.1, gain:0.16},
+          {freq: 784, dur:0.1, gain:0.16},
+          {freq: 1047, dur:0.2, gain:0.18}
+        ]);
+      },
+      milestone(){
+        beep([
+          {freq: 880, dur:0.08, gain:0.18},
+          {freq: 1100, dur:0.08, gain:0.18},
+          {freq: 1320, dur:0.1, gain:0.20},
+          {freq: 1760, dur:0.15, gain:0.22}
+        ]);
+      },
+      gameOver(){
+        beep([
+          {freq: 400, dur:0.15, gain:0.16, type:'sawtooth'},
+          {freq: 350, dur:0.15, gain:0.14, type:'sawtooth'},
+          {freq: 300, dur:0.2, gain:0.12, type:'sawtooth'},
+          {freq: 200, dur:0.3, gain:0.10, type:'sawtooth'}
+        ]);
       }
     };
 
@@ -734,11 +1027,11 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    function burstConfetti(){
-      const n = 120;
+    function burstConfetti(count = 80, fromY = 0.22){
+      const n = count;
       const cx = window.innerWidth * 0.5;
-      const cy = window.innerHeight * 0.22;
-      const colors = ['#2ee59d','#ffd166','#ff3d9a','#2b3fff','#ffffff'];
+      const cy = window.innerHeight * fromY;
+      const colors = ['#2ee59d','#ffd166','#ff3d9a','#2b3fff','#ffffff','#00ffff','#ff6b35'];
       for(let i=0;i<n;i++){
         particles.push({
           x: cx,
@@ -754,6 +1047,13 @@
         });
       }
       if(!raf) raf = requestAnimationFrame(tickFx);
+    }
+
+    function superConfetti(){
+      // Big celebration burst from multiple points
+      burstConfetti(150, 0.15);
+      setTimeout(() => burstConfetti(100, 0.3), 100);
+      setTimeout(() => burstConfetti(100, 0.1), 200);
     }
 
     function tickFx(){
@@ -823,9 +1123,68 @@
       return Object.keys(learned).length;
     }
 
+    function totalLearnedCount(){
+      let total = 0;
+      for(const diff of ['easy', 'medium', 'hard']){
+        total += Object.keys(state.learnedByDiff[diff] || {}).length;
+      }
+      return total;
+    }
+
     function seenCount(){
       const seen = state.seenByDiff[state.difficulty] || {};
       return Object.keys(seen).length;
+    }
+
+    function showStartScreen(){
+      els.startScreen.style.display = '';
+      els.quizContent.style.display = 'none';
+      els.gameOverScreen.classList.remove('show');
+      state.gameStarted = false;
+      state.gameOver = false;
+      saveState();
+    }
+
+    function showQuizContent(){
+      els.startScreen.style.display = 'none';
+      els.quizContent.style.display = '';
+      els.gameOverScreen.classList.remove('show');
+      state.gameStarted = true;
+      state.gameOver = false;
+      saveState();
+    }
+
+    function showGameOver(){
+      state.gameOver = true;
+      state.gameStarted = false;
+      saveState();
+      
+      sfx.gameOver();
+      
+      els.startScreen.style.display = 'none';
+      els.quizContent.style.display = 'none';
+      els.gameOverScreen.classList.add('show');
+      
+      els.finalScore.textContent = state.score;
+      els.finalStreak.textContent = state.bestStreak;
+      els.finalLearned.textContent = totalLearnedCount();
+      
+      const diffNames = { easy: 'Easy ⭐', medium: 'Medium ⭐⭐', hard: 'Hard ⭐⭐⭐' };
+      els.finalLevel.textContent = diffNames[state.difficulty] || 'Easy';
+    }
+
+    function startGame(){
+      state.score = 0;
+      state.streak = 0;
+      state.correctInRow = 0;
+      state.strikes = 0;
+      state.gameOver = false;
+      state.gameStarted = true;
+      state.milestonesHit = { daily5: false, daily10: false, daily12: false };
+      saveState();
+      showQuizContent();
+      updateStats();
+      newQuestion();
     }
 
     function setMode(mode){
@@ -838,24 +1197,135 @@
       els.tabQuiz.setAttribute('aria-selected', quiz ? 'true' : 'false');
       els.tabLearn.setAttribute('aria-selected', quiz ? 'false' : 'true');
       els.modeBadge.textContent = quiz ? 'Quiz' : 'Learn';
-      if(!quiz) renderLearnMode();
-      if(quiz) newQuestion();
+      
+      if(!quiz){
+        renderLearnMode();
+      } else {
+        if(!state.gameStarted && !state.gameOver){
+          showStartScreen();
+        } else if(state.gameOver){
+          showGameOver();
+        } else {
+          showQuizContent();
+          newQuestion();
+        }
+      }
     }
 
     function setDifficulty(diff){
       state.difficulty = diff;
-      // Reset streak when switching (keeps it simple and fair)
       state.streak = 0;
+      state.correctInRow = 0;
       saveState();
       updateStats();
       renderLearnMode();
-      if(state.mode==='quiz') newQuestion();
+      if(state.mode==='quiz' && state.gameStarted && !state.gameOver){
+        newQuestion();
+      }
+    }
+
+    function levelUp(){
+      const levels = ['easy', 'medium', 'hard'];
+      const currentIdx = levels.indexOf(state.difficulty);
+      if(currentIdx < levels.length - 1){
+        const newLevel = levels[currentIdx + 1];
+        state.difficulty = newLevel;
+        state.correctInRow = 0;
+        els.difficultySelect.value = newLevel;
+        saveState();
+        
+        // Celebration
+        sfx.levelUp();
+        superConfetti();
+        
+        // Flash the difficulty selector
+        els.difficultySelect.classList.add('levelUp');
+        setTimeout(() => els.difficultySelect.classList.remove('levelUp'), 800);
+        
+        showFeedback('🚀 LEVEL UP!', `You advanced to ${newLevel.toUpperCase()} mode! Keep going!`);
+        updateStats();
+        
+        // Short delay before next question
+        setTimeout(() => newQuestion(), 1500);
+        return true;
+      }
+      return false;
+    }
+
+    function checkAutoLevelUp(){
+      // 10 correct in a row
+      if(state.correctInRow >= 10){
+        return levelUp();
+      }
+      
+      // Completed all flags in current level
+      const pool = getPool();
+      const learned = state.learnedByDiff[state.difficulty] || {};
+      const learnedInLevel = Object.keys(learned).length;
+      if(learnedInLevel >= pool.length){
+        return levelUp();
+      }
+      
+      return false;
+    }
+
+    function checkMilestones(){
+      // Daily challenge: 5 streak
+      if(state.streak >= 5 && !state.milestonesHit.daily5){
+        state.milestonesHit.daily5 = true;
+        saveState();
+        celebrateMilestone('challengePill', '🎯 Daily Challenge Complete!');
+        return;
+      }
+      
+      // 10 streak
+      if(state.streak >= 10 && !state.milestonesHit.daily10){
+        state.milestonesHit.daily10 = true;
+        saveState();
+        celebrateMilestone('bonusPill', '🔥 10 Streak! Amazing!');
+        return;
+      }
+      
+      // 12 streak (super)
+      if(state.streak >= 12 && !state.milestonesHit.daily12){
+        state.milestonesHit.daily12 = true;
+        saveState();
+        celebrateMilestone('bonusPill', '⚡ 12 STREAK! LEGENDARY!');
+        superConfetti();
+        return;
+      }
+    }
+
+    function celebrateMilestone(pillId, message){
+      sfx.milestone();
+      burstConfetti(100, 0.4);
+      
+      const pill = els[pillId];
+      if(pill){
+        pill.classList.add('celebrate', 'flash');
+        pill.style.background = 'linear-gradient(135deg, rgba(46,229,157,.4), rgba(255,209,102,.4))';
+        
+        setTimeout(() => {
+          pill.classList.remove('celebrate', 'flash');
+          pill.style.background = '';
+        }, 1500);
+      }
+      
+      showFeedback(message, 'Keep up the incredible work! 🌟');
     }
 
     function setSound(on){
       state.soundOn = on;
       els.btnSound.textContent = `Sound: ${on ? 'ON' : 'OFF'}`;
       saveState();
+    }
+
+    function updateStrikes(){
+      const hearts = [];
+      for(let i = 0; i < 3; i++){
+        hearts.push(i < (3 - state.strikes) ? '❤️' : '🖤');
+      }
+      els.strikes.textContent = hearts.join('');
     }
 
     function updateStats(){
@@ -871,13 +1341,12 @@
       const bonus = 1 + Math.floor(state.streak/3);
       els.bonus.textContent = `x${bonus}`;
 
-      // Cute challenge text
       if(state.bestStreak >= 10) els.challenge.textContent = 'Try a 12 streak!';
       else if(state.bestStreak >= 5) els.challenge.textContent = 'Try a 10 streak!';
       else els.challenge.textContent = 'Get a 5 streak';
 
       els.difficultySelect.value = state.difficulty;
-      els.btnLearnThis.disabled = !currentQuestion;
+      updateStrikes();
     }
 
     function flagAltText(country){
@@ -891,13 +1360,11 @@
     let locked = false;
 
     function pickNextCountry(pool){
-      // Prefer unlearned and not repeated from last
       const learned = state.learnedByDiff[state.difficulty] || {};
       const candidates = pool.filter(c => !learned[c.code] && c.code !== state.lastCountryCode);
       const fallback = pool.filter(c => c.code !== state.lastCountryCode);
       const pickFrom = candidates.length ? candidates : fallback.length ? fallback : pool;
 
-      // also add variety: try to prioritize unseen
       const seen = state.seenByDiff[state.difficulty] || {};
       const unseen = pickFrom.filter(c => !seen[c.code]);
       return sample(unseen.length ? unseen : pickFrom);
@@ -910,12 +1377,13 @@
         const c = sample(others);
         if(!choices.some(x => x.code === c.code)) choices.push(c);
       }
-      // In the rare case pool is tiny
       while(choices.length < 4) choices.push(correct);
       return shuffle(choices, Math.floor(Math.random()*1e9));
     }
 
     async function newQuestion(){
+      if(state.gameOver) return;
+      
       locked = false;
       els.feedback.classList.remove('show');
       els.feedbackTitle.textContent = '';
@@ -931,7 +1399,6 @@
       const correct = pickNextCountry(pool);
       currentQuestion = { correct, choices: buildChoices(correct, pool) };
 
-      // mark seen
       state.seenByDiff[state.difficulty][correct.code] = Date.now();
       state.lastCountryCode = correct.code;
       saveState();
@@ -942,7 +1409,6 @@
       els.flagImg.alt = flagAltText(correct);
       els.flagImg.onload = () => els.flagImg.classList.add('pop');
       els.flagImg.onerror = () => {
-        // If CDN image fails, show a simple placeholder
         els.flagHint.textContent = 'Oops — flag image did not load. Tap Next.';
       };
 
@@ -976,14 +1442,12 @@
         btn.querySelector('.badge').textContent = 'Correct!';
 
         state.streak += 1;
+        state.correctInRow += 1;
         state.bestStreak = Math.max(state.bestStreak, state.streak);
         state.score += 10 * bonus;
 
-        // Auto-mark learned after 2 correct streaks in a row for this flag
-        // (simple approach: mark learned on correct if already seen before)
         const seen = state.seenByDiff[state.difficulty][correct.code];
         if(seen){
-          // If they got it right, we consider it learned.
           state.learnedByDiff[state.difficulty][correct.code] = Date.now();
         }
 
@@ -993,12 +1457,21 @@
         burstConfetti();
 
         showFeedback('🎉 You got it!', `${correct.name}. Fun fact: ${correct.fact}`);
+        
+        // Check milestones
+        checkMilestones();
+        
+        // Check for auto level-up (with delay)
+        setTimeout(() => {
+          if(!checkAutoLevelUp()){
+            // If no level up, continue normally
+          }
+        }, 500);
 
       }else{
         btn.classList.add('wrong');
         btn.querySelector('.badge').textContent = 'Not this one';
 
-        // highlight the correct one
         for(const b of allButtons){
           const name = b.querySelector('span')?.textContent;
           if(name === correct.name){
@@ -1008,14 +1481,21 @@
         }
 
         state.streak = 0;
+        state.correctInRow = 0;
+        state.strikes += 1;
         saveState();
         updateStats();
         sfx.wrong();
 
-        showFeedback('So close — keep going!', `That was ${correct.name}. Fun fact: ${correct.fact}`);
+        if(state.strikes >= 3){
+          showFeedback('💥 Three strikes!', `That was ${correct.name}. Game Over!`);
+          setTimeout(() => showGameOver(), 1500);
+        } else {
+          const remaining = 3 - state.strikes;
+          showFeedback('So close — keep going!', `That was ${correct.name}. ${remaining} ${remaining === 1 ? 'life' : 'lives'} left!`);
+        }
       }
 
-      // Unlock next after a short moment
       setTimeout(() => { locked = false; }, 250);
     }
 
@@ -1025,21 +1505,10 @@
       els.feedback.classList.add('show');
     }
 
-    function markLearnedCurrent(){
-      if(!currentQuestion) return;
-      const c = currentQuestion.correct;
-      state.learnedByDiff[state.difficulty][c.code] = Date.now();
-      saveState();
-      updateStats();
-      sfx.click();
-      showFeedback('Nice!', `${c.name} marked as learned. Now keep collecting flags!`);
-    }
-
     /*********************
      * Learn Mode
      *********************/
     function renderLearnMode(){
-      if(state.mode !== 'learn') return;
       const pool = getPool();
       const learned = state.learnedByDiff[state.difficulty] || {};
       els.learnGrid.innerHTML = '';
@@ -1052,21 +1521,9 @@
           <img loading="lazy" src="${FLAG_CDN(c.code)}" alt="${escapeHtml(flagAltText(c))}">
           <div class="name">${escapeHtml(c.name)} ${isLearned ? '✅' : ''}</div>
           <div class="fact">${escapeHtml(c.fact)}</div>
-          <button class="secondary" style="border-radius:14px; padding:10px 12px">${isLearned ? 'Learned!' : 'Mark learned'}</button>
         `;
-        const btn = item.querySelector('button');
-        btn.addEventListener('click', () => {
-          state.learnedByDiff[state.difficulty][c.code] = Date.now();
-          saveState();
-          updateStats();
-          renderLearnMode();
-          sfx.correct();
-        });
 
-        item.addEventListener('click', (e) => {
-          // only if they clicked image/name area; avoid double when button clicked
-          if(e.target === btn) return;
-          // quick pop effect + optional sound
+        item.addEventListener('click', () => {
           item.classList.remove('pop');
           void item.offsetWidth;
           item.classList.add('pop');
@@ -1075,8 +1532,6 @@
 
         els.learnGrid.appendChild(item);
       }
-
-      els.flagHint.textContent = 'Learn Mode';
     }
 
     /*********************
@@ -1094,8 +1549,22 @@
     /*********************
      * Events
      *********************/
-    els.btnNext.addEventListener('click', () => { sfx.click(); newQuestion(); });
-    els.btnLearnThis.addEventListener('click', () => markLearnedCurrent());
+    els.btnNext.addEventListener('click', () => { 
+      sfx.click(); 
+      if(state.gameStarted && !state.gameOver){
+        newQuestion(); 
+      }
+    });
+
+    els.btnStart.addEventListener('click', () => {
+      sfx.click();
+      startGame();
+    });
+
+    els.btnTryAgain.addEventListener('click', () => {
+      sfx.click();
+      startGame();
+    });
 
     els.btnSound.addEventListener('click', () => {
       setSound(!state.soundOn);
@@ -1112,7 +1581,7 @@
       setMode('quiz');
       sfx.click();
       updateStats();
-      newQuestion();
+      showStartScreen();
     });
 
     els.btnShuffle.addEventListener('click', () => {
@@ -1120,7 +1589,7 @@
       saveState();
       sfx.click();
       if(state.mode==='learn') renderLearnMode();
-      if(state.mode==='quiz') newQuestion();
+      if(state.mode==='quiz' && state.gameStarted && !state.gameOver) newQuestion();
     });
 
     els.tabQuiz.addEventListener('click', () => { sfx.click(); setMode('quiz'); });
@@ -1131,7 +1600,6 @@
       setDifficulty(e.target.value);
     });
 
-    // Unlock audio on first interaction (mobile browsers)
     window.addEventListener('pointerdown', () => ensureAudio(), { once:true });
 
     /*********************
@@ -1140,10 +1608,21 @@
     (function init(){
       setSound(state.soundOn);
       els.difficultySelect.value = state.difficulty;
-      setMode(state.mode);
       updateStats();
-      if(state.mode==='quiz') newQuestion();
-      if(state.mode==='learn') renderLearnMode();
+      
+      if(state.mode === 'learn'){
+        setMode('learn');
+      } else {
+        setMode('quiz');
+        if(state.gameOver){
+          showGameOver();
+        } else if(!state.gameStarted){
+          showStartScreen();
+        } else {
+          showQuizContent();
+          newQuestion();
+        }
+      }
     })();
   </script>
 </body>
