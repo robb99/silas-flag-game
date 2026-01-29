@@ -529,7 +529,7 @@
         </div>
         <div class="btnRow">
           <button id="btnSound" class="secondary" title="Toggle sound">Sound: ON</button>
-          <button id="btnNext" title="Next flag">Next ➜</button>
+          <button id="btnNext" title="Next flag">Next</button>
         </div>
       </div>
 
@@ -556,14 +556,14 @@
         <!-- Start Screen -->
         <div class="startScreen" id="startScreen">
           <img class="flagImg" src="https://flagcdn.com/w640/un.png" alt="United Nations Flag" />
-          <h2>🌍 Ready to explore?</h2>
+          <h2>Ready to explore?</h2>
           <p>Test your knowledge of flags from around the world!</p>
-          <button class="start" id="btnStart">Start Game! 🚀</button>
+          <button class="start" id="btnStart">Start Game</button>
         </div>
 
         <!-- Game Over Screen -->
         <div class="gameOverScreen" id="gameOverScreen">
-          <h2>💥 Game Over!</h2>
+          <h2>Game Over</h2>
           <div class="finalScore" id="finalScore">0</div>
           <div class="scoreLabel">POINTS</div>
           <div class="stats">
@@ -580,7 +580,7 @@
               <div class="statLabel">Highest Level</div>
             </div>
           </div>
-          <button id="btnTryAgain">Try Again! 🔄</button>
+          <button id="btnTryAgain">Try Again</button>
         </div>
 
         <!-- Quiz Content -->
@@ -673,7 +673,7 @@
         { code:'ch', name:'Switzerland', fact:'One of the only square flags!' },
         { code:'se', name:'Sweden', fact:'The Nordic cross style is used in nearby countries.' },
         { code:'no', name:'Norway', fact:'Nordic cross = a cross that reaches the edges.' },
-        { code:'dk', name:'Denmark', fact:'It's one of the oldest flags still used.' },
+        { code:'dk', name:'Denmark', fact:'It\'s one of the oldest flags still used.' },
         { code:'fi', name:'Finland', fact:'Blue cross on white like snow and lakes.' },
         { code:'jp', name:'Japan', fact:'The red circle represents the sun.' },
         { code:'cn', name:'China', fact:'Five stars show unity.' },
@@ -812,7 +812,7 @@
         { code:'fj', name:'Fiji', fact:'Light blue with a shield.' },
         { code:'pg', name:'Papua New Guinea', fact:'A bird-of-paradise is on it.' },
         { code:'sb', name:'Solomon Islands', fact:'Diagonal split with stars.' },
-        { code:'vu', name:'Vanuatu', fact:'A boar's tusk symbol appears.' },
+        { code:'vu', name:'Vanuatu', fact:'A boar\'s tusk symbol appears.' },
         { code:'ws', name:'Samoa', fact:'Red with blue rectangle and stars.' },
         { code:'to', name:'Tonga', fact:'Red with white corner and cross.' },
         { code:'ki', name:'Kiribati', fact:'Sun rising over waves with bird!' },
@@ -1274,44 +1274,49 @@
       if(state.streak >= 5 && !state.milestonesHit.daily5){
         state.milestonesHit.daily5 = true;
         saveState();
-        celebrateMilestone('challengePill', '🎯 Daily Challenge Complete!');
+        celebrateMilestone({ pillKey: 'challengePill', message: 'Daily challenge complete!', big: false });
         return;
       }
-      
-      // 10 streak
+
+      // Streak bonus celebration: 10 in a row
       if(state.streak >= 10 && !state.milestonesHit.daily10){
         state.milestonesHit.daily10 = true;
         saveState();
-        celebrateMilestone('bonusPill', '🔥 10 Streak! Amazing!');
+        celebrateMilestone({ pillKey: 'bonusPill', message: 'Streak bonus unlocked: 10!', big: true });
         return;
       }
-      
-      // 12 streak (super)
+
+      // Extra: 12 streak
       if(state.streak >= 12 && !state.milestonesHit.daily12){
         state.milestonesHit.daily12 = true;
         saveState();
-        celebrateMilestone('bonusPill', '⚡ 12 STREAK! LEGENDARY!');
-        superConfetti();
+        celebrateMilestone({ pillKey: 'bonusPill', message: 'Streak bonus: 12! Legendary!', big: true });
         return;
       }
     }
 
-    function celebrateMilestone(pillId, message){
+    function celebrateMilestone({ pillKey, message, big }){
+      // Confetti + sound + flash
       sfx.milestone();
-      burstConfetti(100, 0.4);
-      
-      const pill = els[pillId];
+      if(big){
+        superConfetti();
+      }else{
+        burstConfetti(110, 0.35);
+      }
+
+      const pill = els[pillKey];
       if(pill){
         pill.classList.add('celebrate', 'flash');
         pill.style.background = 'linear-gradient(135deg, rgba(46,229,157,.4), rgba(255,209,102,.4))';
-        
+
         setTimeout(() => {
           pill.classList.remove('celebrate', 'flash');
           pill.style.background = '';
         }, 1500);
       }
-      
-      showFeedback(message, 'Keep up the incredible work! 🌟');
+
+      // UI feedback
+      showFeedback('Milestone!', message);
     }
 
     function setSound(on){
